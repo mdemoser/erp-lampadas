@@ -1,17 +1,20 @@
-# Usa JDK
-FROM maven:3.9.3-eclipse-temurin-22 AS build
+# Etapa 1: Build usando Maven + JDK 21 (estável)
+FROM maven:3.9.6-eclipse-temurin-21 AS build
 WORKDIR /app
 
-# Copia pom.xml e o código-fonte
+# Copia os arquivos de configuração e código
 COPY pom.xml .
 COPY src ./src
 
-# Build do JAR
+# Faz o build (gera o .jar na pasta target)
 RUN mvn clean package -DskipTests
 
-# Segunda fase: só o JAR
+# Etapa 2: Runtime usando JDK 22
 FROM openjdk:22-jdk-oraclelinux8
 WORKDIR /app
-COPY --from=build /app/target/erp-lampadas-0.0.1-SNAPSHOT.jar app.jar
-EXPOSE 8080
-ENTRYPOINT ["java","-jar","app.jar"]
+
+# Copia o JAR gerado do estágio de build
+COPY --from=build /app/target/*.jar app.jar
+
+# Comando para rodar a aplicação
+ENTRYPOINT ["java", "-jar", "app.jar"]

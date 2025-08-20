@@ -1,4 +1,4 @@
-# Etapa 1: Build usando Maven + JDK 21 (estável)
+# Etapa 1: Build usando Maven + JDK 21
 FROM maven:3.9.6-eclipse-temurin-21 AS build
 WORKDIR /app
 
@@ -9,7 +9,7 @@ COPY src ./src
 # Faz o build (gera o .jar na pasta target)
 RUN mvn clean package -DskipTests
 
-# Etapa 2: Runtime usando JDK 22
+# Etapa 2: Runtime (pode usar JDK 21 ou 22)
 FROM openjdk:22-jdk-oraclelinux8
 WORKDIR /app
 
